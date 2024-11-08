@@ -53,6 +53,7 @@ class TestUrbanRoutes:
     def test_order_2_ice_creams(self):
         # placeholder for ordering two ice creams; will be expanded in later steps
         # Add in S8
+        # test comment (Discord)
         number_of_ice_creams = 2
         for test_order in range(number_of_ice_creams):
         # Loop to simulate ordering two ice creams
