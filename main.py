@@ -53,7 +53,8 @@ class TestUrbanRoutes:
     def test_order_2_ice_creams(self):
         # placeholder for ordering two ice creams; will be expanded in later steps
         # Add in S8
-        for test_order in range(2):
+        number_of_ice_creams = 2
+        for test_order in range(number_of_ice_creams):
         # Loop to simulate ordering two ice creams
         #Add in S8
             print(f"Function created for ordering ice cream #{test_order +1}")
