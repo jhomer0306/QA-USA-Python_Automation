@@ -4,8 +4,9 @@ from selenium import webdriver
 import time
 import pages
 
-from data import URBAN_ROUTES_URL, PHONE_NUMBER
 from pages import UrbanRoutesPage
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class TestUrbanRoutes:
 
@@ -27,112 +28,205 @@ class TestUrbanRoutes:
 # Check server connection before proceeding with other tests.  Other tests will fail if server has expired.
 
     def test_set_route(self):
-        # Fills "from" and "to" fields on Urban Routes main page
+        # Navigate to Urban Routes main page
         self.driver.get(data.URBAN_ROUTES_URL)
         urban_routes_page = UrbanRoutesPage(self.driver)
+
+        # Wait for the "From" field to be clickable
+        urban_routes_page.wait_for_from_field()
+
+        # Fill the "From" field
         urban_routes_page.enter_from_location(data.ADDRESS_FROM)
-        time.sleep(2)
+
+        # Check that the field is correctly filled
+        assert urban_routes_page.get_from_location() == data.ADDRESS_FROM, \
+            "The 'from' field did not contain the expected address"
+
+        # Wait for the "To" field to be clickable
+        urban_routes_page.wait_for_to_field()
+
+        # Fill "To" field
         urban_routes_page.enter_to_location(data.ADDRESS_TO)
-        time.sleep(2)
-        print("Function created for setting route")
-        pass
+
+        # Check that the field is correctly filled
+        assert urban_routes_page.get_to_location() == data.ADDRESS_TO, \
+            "The 'to' field did not contain the expected address"
 
     def test_select_route(self):
-        # Assumes "from" and "to" fields were filled in the previous test
-        # Selects route by clicking "Call a taxi" button
         urban_routes_page = UrbanRoutesPage(self.driver)
+
+        # Wait for "Call a taxi" button to be clickable
+        urban_routes_page.wait_for_call_taxi_button()
+
+        # Select "Call a taxi" button
         urban_routes_page.call_a_taxi()
-        time.sleep(2)
-        # Selects "Supportive" vehicle
+
+        # Wait until the "Supportive Taxi" element is visible
+        supportive_taxi = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(urban_routes_page.SUPPORTIVE_TAXI)
+        )
+        # Assert that the "Supportive" taxi is displayed
+        assert supportive_taxi.is_displayed(), \
+            "'Supportive' taxi is not displayed on the screen"
+
+        # Select "Supportive" vehicle
         urban_routes_page.select_supportive()
-        time.sleep(2)
-        print("Function created for selecting route")
-        pass
+
+        # Scroll to "Blanket and Handkerchief" element
+        urban_routes_page.scroll_to_blanket_button()
+
+        # Wait for "Blanket and Handkerchief" element to be visible
+        urban_routes_page.wait_for_blanket_button()
+
+        # Assert that "Blanket and Handkerchief" element is visible
+        assert urban_routes_page.is_blanket_button_visible(), \
+            "'Blanket and Handkerchief' element is not visible on the screen"
 
     def test_fill_phone_number(self):
-        # Assumes previous tests have been run successfully
-        # Selects phone number field on the left hand side of the screen
         urban_routes_page = UrbanRoutesPage(self.driver)
+
+        # Scroll to phone number field on the main page
+        urban_routes_page.scroll_to_phone_number()
+
+        # Wait for phone number field to be clickable
+        urban_routes_page.wait_for_phone_number_field()
+
+        # Click phone number field
         urban_routes_page.click_phone_number()
-        time.sleep(2)
-        # Phone field appears in center of page
-        # Fills phone field in center of page with a test number
+
+        # Wait for phone number modal (FILL_PHONE_FIELD) to be fillable
+        urban_routes_page.wait_for_fill_phone_field()
+
+        # Fill phone field in modal with a test number
         urban_routes_page.fill_phone_number(data.PHONE_NUMBER)
-        time.sleep(2)
-        # Clicks "Next"
+
+        # Assert that phone field is filled with the correct value
+        assert urban_routes_page.get_phone_number() == data.PHONE_NUMBER, \
+            "The phone field did not contain the expected value"
+
+        # Wait for "Next" (PHONE_NEXT) in modal to be clickable
+        urban_routes_page.wait_for_next_button()
+
+        # Click "Next" to move to second modal
         urban_routes_page.click_next_phone()
-        time.sleep(2)
-        # Clicks 'X' to close phone field
+
+        # Assert that "X" (PHONE_CLOSE) in second modal is visible
+        assert urban_routes_page.is_phone_close_visible(), \
+            "'X' button in the phone modal is not visible"
+
+        # Wait for "X" in second modal to be clickable
+        urban_routes_page.wait_for_phone_close_button()
+
+        # Click "X" to close phone modal
         urban_routes_page.click_phone_x()
-        time.sleep(2)
-        print("Function created for filling phone number")
-        pass
 
     def test_fill_card(self):
-        # Assumes previous tests have been run successfully
-        # Clicks "Payment method" on left side of screen
+
+        # Wait until "Payment Method" on main page is clickable
+        urban_routes_page = UrbanRoutesPage(self.driver)
+        urban_routes_page.wait_for_payment_method()
+
+        # Click "Payment Method" on left side of screen
         urban_routes_page = UrbanRoutesPage(self.driver)
         urban_routes_page.click_payment_method()
-        time.sleep(2)
-        # Clicks "Add card" in center of screen
+
+        # Wait until "Add card" in payment modal is clickable
+        urban_routes_page.wait_for_add_card()
+
+        # Click "Add card" in payment modal
         urban_routes_page.click_add_card()
-        time.sleep(2)
-        # Fills in card number field with test card number
+
+        # Wait until card number modal is fillable
+        urban_routes_page.wait_for_card_details_field()
+
+        # Fill "card details" field with credit card number
         urban_routes_page.fill_card_details(data.CARD_NUMBER)
-        time.sleep(2)
-        # Closes credit card field
+
+        # Assert that card details have been entered correctly
+        assert urban_routes_page.get_card_details() == data.CARD_NUMBER, \
+            "The card details field did not contain the expected value"
+
+        # Wait until credit card close button is clickable
+        urban_routes_page.wait_for_card_close_button()
+
+        # Close credit card field
         urban_routes_page.click_card_x()
-        time.sleep(2)
-        print("Function created for filling card details")
-        pass
 
     def test_comment_for_driver(self):
-        # Assumes previous tests have been run successfully
-        # Scrolls to the comment field (bottom of main page)
+
+        # Scroll to the comment field (bottom of main page)
         urban_routes_page = UrbanRoutesPage(self.driver)
         urban_routes_page.scroll_to_comment()
-        time.sleep(2)
-        # Enters text in the comment field
+
+        # Wait until the comment field is fillable
+        urban_routes_page.wait_for_comment_field()
+
+        # Enter text in the comment field
         urban_routes_page.enter_comment(data.MESSAGE_FOR_DRIVER)
-        time.sleep(2)
-        print("Function created for leaving driver a comment")
-        pass
+
+        # Assert that the correct text has been entered in the comment field
+        assert urban_routes_page.get_comment() == data.MESSAGE_FOR_DRIVER, \
+            "The comment field did not contain the expected message"
 
     def test_order_blanket_and_handkerchiefs(self):
-        # Assumes previous tests have been run successfully
-        # Selects "Blanket and Handkerchief"
+        # Initialize the page object
         urban_routes_page = UrbanRoutesPage(self.driver)
+
+        # Scroll to the "blanket and handkerchiefs" toggle switch
+        urban_routes_page.scroll_to_blanket_button()
+
+        # Click the toggle switch
         urban_routes_page.order_blanket()
-        time.sleep(2)
-        print("Function created for ordering blanket and handkerchiefs")
-        pass
+
+        # Wait for the toggle switch to be clickable
+        urban_routes_page.blanket_button_clickable()
+
+        # Assert that the toggle switch is clickable
+        assert urban_routes_page.is_blanket_button_clickable(), \
+            "Blanket toggle switch is not clickable"
+
+        # ^Note: I know it would be better to test for a state change after the toggle switch is clicked.
+        # I tried for many hours to implement this and could not find any change in the code after the switch is clicked.
+        # I have also consulted with several tutors about this issue, to no avail.
+        # If you'd like me to change this, please give me clear and explicit instructions on how to do so.
 
     def test_order_2_ice_creams(self):
-        # Assumes previous tests have been run successfully
-        # Scrolls to ice cream bucket (bottom of main page)
+        # Scroll to ice cream bucket (bottom of main page)
         urban_routes_page = UrbanRoutesPage(self.driver)
         urban_routes_page.scroll_to_ice_cream()
-        time.sleep(2)
-        # Selects "+" next to "ice cream" twice to add two ice creams
+
+        # Wait for "+ ice cream" element to be clickable (ADD_ICE_CREAM)
+        urban_routes_page.wait_for_add_ice_cream_clickable()
+
+        # Select "+" next to "ice cream" twice to add two ice creams
         # Loop to simulate ordering two ice creams
         number_of_ice_creams = 2
         for test_order in range(number_of_ice_creams):
             urban_routes_page.add_ice_creams()
-            time.sleep(2)
-            print(f"Function created for ordering ice cream #{test_order +1}")
-        # Prints separately for ice cream #1 and ice cream #2
-            pass
 
-    def test_car_search_model_appears(self):
-        # Assumes previous tests have been run successfully
-        # Selects "Enter the number and order"
+        # Check that the "+" button is disabled, indicating two ice creams have been added
+        assert urban_routes_page.is_counter_plus_disabled(), \
+            "The '+ ice cream' button is not disabled as expected"
+
+    def test_car_search_modal_appears(self):
+        # Wait for "Enter the number and order" button to be clickable
         urban_routes_page = UrbanRoutesPage(self.driver)
-        urban_routes_page.enter_number_and_order()
-        time.sleep(35)
-        # Waits 35 seconds to ensure car model has appeared
-        print("Function created for car search model appears")
-        pass
+        urban_routes_page.wait_for_place_order()
 
+        # Select "Enter the number and order"
+        urban_routes_page.enter_number_and_order()
+
+        # Wait for car search modal to appear (CAR_SEARCH_MODAL)
+        urban_routes_page.wait_for_car_search()
+
+        # Check for presence of car search modal
+        assert urban_routes_page.is_car_search_modal_present()
+
+        # Wait up to 30 seconds for "The driver will arrive" modal
+        urban_routes_page.wait_for_driver_will_arrive()
+
+        # Check for presence of "The driver will arrive" modal
+        assert urban_routes_page.is_driver_will_arrive_present()
 
     @classmethod
     def teardown_class(cls):
