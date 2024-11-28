@@ -298,3 +298,8 @@ class UrbanRoutesPage:
 
     def get_amount_of_ice_cream(self):
         return int(self.driver.find_elements(*self.ENUMERABLE_OBJECT_COUNT)[0].text)
+
+
+
+
+
