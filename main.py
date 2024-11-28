@@ -186,15 +186,9 @@ class TestUrbanRoutes:
         # Click the toggle switch
         urban_routes_page.order_blanket()
 
-        # Wait for the toggle switch to be clickable
-        urban_routes_page.blanket_button_clickable()
-
-        # Assert that the toggle switch is clickable
-        assert urban_routes_page.is_blanket_button_clickable(), \
-            "Blanket toggle switch is not clickable"
-
-        # To reviewer: I haven't changed this code because my success manager asked me to resubmit the project to you
-        # I did make the other revisions -- thanks!
+        # Check that the toggle switch is checked
+        assert urban_routes_page.get_blanket_and_handkerchiefs_option_checked(), \
+            "Blanket toggle switch is not checked as expected"
 
     def test_order_2_ice_creams(self):
         urban_routes_page = UrbanRoutesPage(self.driver)
@@ -211,9 +205,9 @@ class TestUrbanRoutes:
         for test_order in range(number_of_ice_creams):
             urban_routes_page.add_ice_creams()
 
-        # Check that the "+" button is disabled, indicating two ice creams have been added
-        assert urban_routes_page.is_counter_plus_disabled(), \
-            "The '+ ice cream' button is not disabled as expected"
+        # Check that two ice creams have been added
+        assert urban_routes_page.get_amount_of_ice_cream() == 2, \
+            "Two ice creams have not been added as expected"
 
     def test_car_search_modal_appears(self):
         urban_routes_page = UrbanRoutesPage(self.driver)

@@ -29,6 +29,9 @@ class UrbanRoutesPage:
     PLACE_ORDER = (By.XPATH, '//*[@id="root"]/div/div[3]/div[4]/button/span[1]')
     CAR_SEARCH_MODAL = (By.XPATH, "//div[@class='order-header-title' and text()='Car search']")
     DRIVER_WILL_ARRIVE = (By.XPATH, "//div[contains(text(), 'driver will arrive')]")
+    OPTION_SWITCHES_INPUTS = (By.CLASS_NAME, 'switch-input')
+    ENUMERABLE_OBJECT_COUNT = (By.CLASS_NAME, 'counter-value')
+
 
     def __init__(self, driver: webdriver):
         self.driver = driver
@@ -289,20 +292,9 @@ class UrbanRoutesPage:
         except:
             return False
 
+    def get_blanket_and_handkerchiefs_option_checked(self):
+        switches = self.driver.find_elements(*self.OPTION_SWITCHES_INPUTS)
+        return switches[0].get_property('checked')
 
-
-    # def is_blanket_ordered(self):
-        #"""Checks if the 'Blanket and Handkerchief' slider has been clicked."""
-        #blanket_button = self.driver.find_element(*self.BLANKET_BUTTON)
-        #return "active" in blanket_button.get_attribute("class")
-
-    #def is_blanket_toggled(self):
-        # """Checks if the 'Blanket and Handkerchiefs' toggle switch is activated."""
-        #toggle_input = self.driver.find_element(*self.BLANKET_TOGGLE_INPUT)
-        #return toggle_input.is_selected()
-
-    # def wait_for_blanket_toggle_state_change(self, initial_state):
-        # """Waits for the state of the toggle switch to change."""
-        # WebDriverWait(self.driver, 10).until(
-        #    lambda driver: self.is_blanket_toggled() != initial_state
-        # )
+    def get_amount_of_ice_cream(self):
+        return int(self.driver.find_elements(*self.ENUMERABLE_OBJECT_COUNT)[0].text)
