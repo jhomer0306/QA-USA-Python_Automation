@@ -276,8 +276,8 @@ class UrbanRoutesPage:
             return False
 
     def wait_for_driver_will_arrive(self):
-        # Wait up to 30 seconds for "The driver will arrive" modal to appear
-        WebDriverWait(self.driver, 30).until(
+        # Wait up to 60 seconds for "The driver will arrive" modal to appear
+        WebDriverWait(self.driver, 60).until(
             EC.visibility_of_element_located(self.DRIVER_WILL_ARRIVE)
         )
 

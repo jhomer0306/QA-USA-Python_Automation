@@ -1,7 +1,7 @@
 # File with constants
 
 # URL for Urban Routes
-URBAN_ROUTES_URL = 'https://cnt-bfd35553-086b-4e1e-8f7f-9405ebfb5ff2.containerhub.tripleten-services.com'
+URBAN_ROUTES_URL = 'https://cnt-3c4913e7-a0f6-43ad-8762-ed2d02d4b818.containerhub.tripleten-services.com'
 
 # Tuple containing tariff options
 TARIFFS = ('Business', 'Sleepy', 'Holiday', 'Talking', 'Supportive', 'Glossy')

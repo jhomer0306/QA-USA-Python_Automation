@@ -27,7 +27,7 @@ class TestUrbanRoutes:
 # If the Urban Routes server is reachable, print "Connected...".  Otherwise, print "cannot connect..."
 # Check server connection before proceeding with other tests.  Other tests will fail if server has expired.
 
-    def test_set_route(self):
+    def test_set_route_from(self):
         # Navigate to Urban Routes main page
         self.driver.get(data.URBAN_ROUTES_URL)
         urban_routes_page = UrbanRoutesPage(self.driver)
@@ -42,6 +42,9 @@ class TestUrbanRoutes:
         assert urban_routes_page.get_from_location() == data.ADDRESS_FROM, \
             "The 'from' field did not contain the expected address"
 
+    def test_set_route_to(self):
+        urban_routes_page = UrbanRoutesPage(self.driver)
+
         # Wait for the "To" field to be clickable
         urban_routes_page.wait_for_to_field()
 
@@ -52,7 +55,7 @@ class TestUrbanRoutes:
         assert urban_routes_page.get_to_location() == data.ADDRESS_TO, \
             "The 'to' field did not contain the expected address"
 
-    def test_select_route(self):
+    def test_select_call_taxi(self):
         urban_routes_page = UrbanRoutesPage(self.driver)
 
         # Wait for "Call a taxi" button to be clickable
@@ -68,6 +71,9 @@ class TestUrbanRoutes:
         # Assert that the "Supportive" taxi is displayed
         assert supportive_taxi.is_displayed(), \
             "'Supportive' taxi is not displayed on the screen"
+
+    def test_select_supportive_taxi(self):
+        urban_routes_page = UrbanRoutesPage(self.driver)
 
         # Select "Supportive" vehicle
         urban_routes_page.select_supportive()
@@ -104,6 +110,9 @@ class TestUrbanRoutes:
         assert urban_routes_page.get_phone_number() == data.PHONE_NUMBER, \
             "The phone field did not contain the expected value"
 
+    def test_phone_next_and_close(self):
+        urban_routes_page = UrbanRoutesPage(self.driver)
+
         # Wait for "Next" (PHONE_NEXT) in modal to be clickable
         urban_routes_page.wait_for_next_button()
 
@@ -114,16 +123,16 @@ class TestUrbanRoutes:
         assert urban_routes_page.is_phone_close_visible(), \
             "'X' button in the phone modal is not visible"
 
+    def test_fill_card(self):
+        urban_routes_page = UrbanRoutesPage(self.driver)
+
         # Wait for "X" in second modal to be clickable
         urban_routes_page.wait_for_phone_close_button()
 
         # Click "X" to close phone modal
         urban_routes_page.click_phone_x()
 
-    def test_fill_card(self):
-
         # Wait until "Payment Method" on main page is clickable
-        urban_routes_page = UrbanRoutesPage(self.driver)
         urban_routes_page.wait_for_payment_method()
 
         # Click "Payment Method" on left side of screen
@@ -146,16 +155,16 @@ class TestUrbanRoutes:
         assert urban_routes_page.get_card_details() == data.CARD_NUMBER, \
             "The card details field did not contain the expected value"
 
+    def test_comment_for_driver(self):
+        urban_routes_page = UrbanRoutesPage(self.driver)
+
         # Wait until credit card close button is clickable
         urban_routes_page.wait_for_card_close_button()
 
         # Close credit card field
         urban_routes_page.click_card_x()
 
-    def test_comment_for_driver(self):
-
         # Scroll to the comment field (bottom of main page)
-        urban_routes_page = UrbanRoutesPage(self.driver)
         urban_routes_page.scroll_to_comment()
 
         # Wait until the comment field is fillable
@@ -169,7 +178,6 @@ class TestUrbanRoutes:
             "The comment field did not contain the expected message"
 
     def test_order_blanket_and_handkerchiefs(self):
-        # Initialize the page object
         urban_routes_page = UrbanRoutesPage(self.driver)
 
         # Scroll to the "blanket and handkerchiefs" toggle switch
@@ -185,14 +193,13 @@ class TestUrbanRoutes:
         assert urban_routes_page.is_blanket_button_clickable(), \
             "Blanket toggle switch is not clickable"
 
-        # ^Note: I know it would be better to test for a state change after the toggle switch is clicked.
-        # I tried for many hours to implement this and could not find any change in the code after the switch is clicked.
-        # I have also consulted with several tutors about this issue, to no avail.
-        # If you'd like me to change this, please give me clear and explicit instructions on how to do so.
+        # To reviewer: I haven't changed this code because my success manager asked me to resubmit the project to you
+        # I did make the other revisions -- thanks!
 
     def test_order_2_ice_creams(self):
-        # Scroll to ice cream bucket (bottom of main page)
         urban_routes_page = UrbanRoutesPage(self.driver)
+
+        # Scroll to ice cream bucket (bottom of main page)
         urban_routes_page.scroll_to_ice_cream()
 
         # Wait for "+ ice cream" element to be clickable (ADD_ICE_CREAM)
@@ -209,8 +216,9 @@ class TestUrbanRoutes:
             "The '+ ice cream' button is not disabled as expected"
 
     def test_car_search_modal_appears(self):
-        # Wait for "Enter the number and order" button to be clickable
         urban_routes_page = UrbanRoutesPage(self.driver)
+
+        # Wait for "Enter the number and order" button to be clickable
         urban_routes_page.wait_for_place_order()
 
         # Select "Enter the number and order"
@@ -222,7 +230,10 @@ class TestUrbanRoutes:
         # Check for presence of car search modal
         assert urban_routes_page.is_car_search_modal_present()
 
-        # Wait up to 30 seconds for "The driver will arrive" modal
+    def test_driver_will_arrive_appears(self):
+        urban_routes_page = UrbanRoutesPage(self.driver)
+
+        # Wait up to 60 seconds for "The driver will arrive" modal
         urban_routes_page.wait_for_driver_will_arrive()
 
         # Check for presence of "The driver will arrive" modal
